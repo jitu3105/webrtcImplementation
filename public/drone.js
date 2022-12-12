@@ -1,4 +1,4 @@
-var socket = io.connect("http://localhost:4000");
+var socket = io.connect("http://192.168.11.24:4000");
 var divVideoChatLobby = document.getElementById("video-chat-lobby");
 var divVideoChatRoom = document.getElementById("video-chat-room");
 var joinButton = document.getElementById("join");
@@ -64,43 +64,12 @@ socket.on("created", async () => {
     console.log(err);
   }
 });
-socket.on("joined", async () => {
-  creator = false;
-  try {
-    console.log("asdasd");
-    console.log(navigator);
-    console.log(navigator.mediaDevices);
-    const temp=await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: { width: 800, height: 720 },
-      })
-    console.log(
-      temp
-    );
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: { width: 800, height: 720 },
-    });
-    console.log(stream)
-    userStream = stream;
 
-    divVideoChatLobby.style.display = "none";
-    console.log(userVideo);
-    console.log(stream);
-    userVideo.srcObject = stream;
-    userVideo.onloadedmetadata = (e) => {
-      console.log(e)
-      userVideo.play();
-    };
-
-    socket.emit("ready", roomName);
-  } catch (err) {
-    console.log(err);
-  }
-});
 socket.on("full", () => {
   alert("hey room is full try again later");
 });
+
+
 socket.on("ready", () => {
   if (creator) {
     // alert("heheh");
@@ -126,27 +95,7 @@ socket.on("candidate", (candidate) => {
   rtcPeerConnection.addIceCandidate(iceCandidate);
 });
 
-socket.on("offer", (offer) => {
-  
-  if (!creator) {
-    // alert("heheh");
-    rtcPeerConnection = new RTCPeerConnection(iceServers);
-    rtcPeerConnection.onicecandidate = onIceCandidateFunction;
-    rtcPeerConnection.ontrack = onTrackFunction;
-    rtcPeerConnection.addTrack(userStream.getTracks()[0], userStream);
-    rtcPeerConnection.addTrack(userStream.getTracks()[1], userStream);
-    rtcPeerConnection.setRemoteDescription(offer);
-    rtcPeerConnection.createAnswer(
-      (answer) => {
-        rtcPeerConnection.setLocalDescription(answer);
-        socket.emit("answer", { answer, roomName });
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-});
+
 socket.on("answer", (answer) => {
   rtcPeerConnection.setRemoteDescription(answer);
 });

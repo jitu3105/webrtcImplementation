@@ -38,60 +38,34 @@ roomName=roomInput.value
   socket.emit("join", roomName);
 });
 
-socket.on("created", async () => {
-
-  creator = true;
-  try {
-    console.log(navigator);
-    console.log(navigator.mediaDevices);
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: { width: 800, height: 720 },
-    });
-    console.log(stream)
-    userStream = stream;
-    divVideoChatLobby.style.display = "none";
-    console.log(userVideo);
-    console.log(stream);
-    userVideo.muted = true;
-    userVideo.srcObject = stream;
-    console.log(stream)
-    userVideo.onloadedmetadata = (e) => {
-      userVideo.play();
-    };
-    socket.emit("ready", roomName);
-  } catch (err) {
-    console.log(err);
-  }
-});
 socket.on("joined", async () => {
   creator = false;
   try {
-    console.log("asdasd");
-    console.log(navigator);
-    console.log(navigator.mediaDevices);
-    const temp=await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: { width: 800, height: 720 },
-      })
-    console.log(
-      temp
-    );
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: { width: 800, height: 720 },
-    });
-    console.log(stream)
-    userStream = stream;
+    // console.log("asdasd");
+    // console.log(navigator);
+    // console.log(navigator.mediaDevices);
+    // const temp=await navigator.mediaDevices.getUserMedia({
+    //     audio: true,
+    //     video: { width: 800, height: 720 },
+    //   })
+    // console.log(
+    //   temp
+    // );
+    // const stream = await navigator.mediaDevices.getUserMedia({
+    //   audio: true,
+    //   video: { width: 800, height: 720 },
+    // });
+    // console.log(stream)
+    // userStream = stream;
 
     divVideoChatLobby.style.display = "none";
-    console.log(userVideo);
-    console.log(stream);
-    userVideo.srcObject = stream;
-    userVideo.onloadedmetadata = (e) => {
-      console.log(e)
-      userVideo.play();
-    };
+    // console.log(userVideo);
+    // console.log(stream);
+    // userVideo.srcObject = stream;
+    // userVideo.onloadedmetadata = (e) => {
+      // console.log(e)
+      // userVideo.play();
+    // };
 
     socket.emit("ready", roomName);
   } catch (err) {
@@ -100,25 +74,6 @@ socket.on("joined", async () => {
 });
 socket.on("full", () => {
   alert("hey room is full try again later");
-});
-socket.on("ready", () => {
-  if (creator) {
-    // alert("heheh");
-    rtcPeerConnection = new RTCPeerConnection(iceServers);
-    rtcPeerConnection.onicecandidate = onIceCandidateFunction;
-    rtcPeerConnection.ontrack = onTrackFunction;
-    rtcPeerConnection.addTrack(userStream.getTracks()[0], userStream);
-    rtcPeerConnection.addTrack(userStream.getTracks()[1], userStream);
-    rtcPeerConnection.createOffer(
-      (offer) => {
-        rtcPeerConnection.setLocalDescription(offer);
-        socket.emit("offer", { offer, roomName });
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
 });
 
 socket.on("candidate", (candidate) => {
@@ -133,8 +88,8 @@ socket.on("offer", (offer) => {
     rtcPeerConnection = new RTCPeerConnection(iceServers);
     rtcPeerConnection.onicecandidate = onIceCandidateFunction;
     rtcPeerConnection.ontrack = onTrackFunction;
-    rtcPeerConnection.addTrack(userStream.getTracks()[0], userStream);
-    rtcPeerConnection.addTrack(userStream.getTracks()[1], userStream);
+    // rtcPeerConnection.addTrack(userStream.getTracks()[0], userStream);
+    // rtcPeerConnection.addTrack(userStream.getTracks()[1], userStream);
     rtcPeerConnection.setRemoteDescription(offer);
     rtcPeerConnection.createAnswer(
       (answer) => {
